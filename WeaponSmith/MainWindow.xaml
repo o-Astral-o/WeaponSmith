@@ -1,0 +1,159 @@
+<Window x:Class="WeaponSmith.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:WeaponSmith.Converters"
+        mc:Ignorable="d"
+        Title="Weapon Smith" Height="1080" Width="760" MinHeight="300" MinWidth="300"
+        AllowDrop="True"
+        Drop="Window_Drop"
+        DragOver="Window_DragOver"
+        Closing="Window_Closing">
+    <Window.Resources>
+        <converters:BoolConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:MultilineConverter x:Key="TextIsMultilineConverter"/>
+        <Style x:Key="MultilineEditStyle" TargetType="TextBox">
+            <Setter Property="AcceptsReturn" Value="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource TextIsMultilineConverter}}"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="1" Margin="10,0,10,0">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <Menu>
+                    <MenuItem Header="File" Width="75" Height="50">
+                        <MenuItem Header="Open..." Click="Open_MenuItemClick"/>
+                        <MenuItem x:Name="OpenRecentMenuItem" Header="Open Recent"/>
+                        <MenuItem x:Name="SaveMenuItem" Header="Save" Click="Save_MenuItemClick" IsEnabled="False"/>
+                        <MenuItem x:Name="SaveAsMenuItem" Header="Save As..." Click="SaveAs_MenuItemClick" IsEnabled="False"/>
+                    </MenuItem>
+                </Menu>
+                <CheckBox x:Name="AlwaysOnTopCheckBox" Content="Always on top" VerticalAlignment="Center" Margin="10,0,0,0" Checked="AlwaysOnTopCheckBox_CheckedChanged" Unchecked="AlwaysOnTopCheckBox_CheckedChanged"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <TextBlock Text="Search:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox x:Name="SearchTextBox" Width="300" Height="0" TextChanged="SearchTextBox_TextChanged"/>
+            </StackPanel>
+        </Grid>
+        
+        <TabControl Grid.Row="2" Margin="10,0,10,10">
+            <TabItem Header="All">
+                <DataGrid x:Name="AllDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="General" IsSelected="True">
+                <DataGrid x:Name="GeneralDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" IsReadOnly="True"/>
+                        <DataGridTemplateColumn Header="Value" Width="*">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                                 BorderThickness="0"
+                                                 Background="Transparent"
+                                                 AcceptsReturn="{Binding Text, RelativeSource={RelativeSource Self}, Converter={StaticResource TextIsMultilineConverter}}"
+                                                 TextWrapping="Wrap"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Visibility="{Binding IsDropdownField, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Inverse}"/>
+                                        <ComboBox ItemsSource="{Binding DropdownValues}" 
+                                                  SelectedItem="{Binding Value, UpdateSourceTrigger=PropertyChanged}"
+                                                  Visibility="{Binding IsDropdownField, Converter={StaticResource BoolToVisibilityConverter}}"
+                                                  IsEditable="False"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Damage">
+                <DataGrid x:Name="DamageDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Models">
+                <DataGrid x:Name="ModelsDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Anims">
+                <DataGrid x:Name="AnimsDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="State Timers">
+                <DataGrid x:Name="StateTimerDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Sounds">
+                <DataGrid x:Name="SoundsDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="FX">
+                <DataGrid x:Name="FXDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="UI">
+                <DataGrid x:Name="UIDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="Misc">
+                <DataGrid x:Name="MiscDataGrid"
+                          AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Key" Binding="{Binding Key, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                        <DataGridTextColumn Header="Value" Binding="{Binding Value, UpdateSourceTrigger=PropertyChanged}" Width="*" EditingElementStyle="{StaticResource MultilineEditStyle}"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
